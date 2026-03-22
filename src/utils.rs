@@ -192,7 +192,7 @@ pub fn الوقت_المحلي() -> String {
 /// تنسيق الوقت
 pub fn تنسيق_الوقت(الطابع: i64) -> String {
     chrono::DateTime::from_timestamp(الطابع, 0)
-        .map(|dt| dt.format("%Y-%m-%d %H:%M:%S").to_string())
+        .map(|dt: chrono::DateTime<chrono::Utc>| dt.format("%Y-%m-%d %H:%M:%S").to_string())
         .unwrap_or_default()
 }
 
@@ -210,10 +210,8 @@ pub fn sha256(النص: &str) -> String {
 
 /// حساب MD5 (غير آمن للاستخدام الأمني)
 pub fn md5(النص: &str) -> String {
-    use md5::{Md5, Digest};
-    let mut hasher = Md5::new();
-    hasher.update(النص.as_bytes());
-    format!("{:x}", hasher.finalize())
+    let digest = md5::compute(النص.as_bytes());
+    format!("{:x}", digest)
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

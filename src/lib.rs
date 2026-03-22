@@ -100,7 +100,7 @@ pub use error::خطأ_ويب;
 // ═══════════════════════════════════════════════════════════════════════════════
 
 use serde::Serialize;
-use serde_json::{json, Value as JsonValue};
+use serde_json::Value as JsonValue;
 
 /// نوع JSON للاستخدام السهل
 pub type Json = JsonValue;

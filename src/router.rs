@@ -293,7 +293,7 @@ impl الموجه {
     
     /// معالجة طلب
     pub fn عالج(&self, طلب_م: طلب) -> رد {
-        let path = طلب_م.المسار_النظيف();
+        let path = طلب_م.المسار_النظيف().to_string();
         let method: طريقة = طلب_م.الطريقة.into();
         
         // البحث في المسارات
@@ -305,7 +305,7 @@ impl الموجه {
             }
             
             // التحقق من النمط
-            if let Some(params) = route.طابق(path) {
+            if let Some(params) = route.طابق(&path) {
                 let mut request = طلب_م;
                 request.المعاملات = params;
                 return (route.المعالج)(request);

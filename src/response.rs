@@ -108,7 +108,7 @@ impl حالة {
     pub const خدمة_غير_متاحة: حالة = حالة { الكود: 503, النص: "Service Unavailable" };
     
     /// 504 - انتهت مهلة البوابة
-    pub const مهلة_البوابة: حالة = حالة { الكود: 504, النص: "Gateway Timeout" }
+    pub const مهلة_البوابة: حالة = حالة { الكود: 504, النص: "Gateway Timeout" };
 }
 
 impl Default for حالة {
