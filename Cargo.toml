@@ -1,0 +1,74 @@
+[package]
+name = "almarjaa-web"
+version = "3.4.0"
+edition = "2021"
+authors = ["رضوان دالي حمدوني <almarjaa.project@hotmail.com>"]
+description = "خادم ويب عربي متكامل - Al-Marjaa Web Server"
+license = "MIT"
+repository = "https://github.com/radhwendalyhamdouni/Al-Marjaa-Web"
+readme = "README.md"
+keywords = ["arabic", "web-server", "http", "websocket", "framework"]
+categories = ["web-programming", "web-programming::http-server", "internationalization"]
+
+[dependencies]
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# HTTP
+hyper = { version = "1.0", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["full"] }
+
+# WebSocket
+tokio-tungstenite = "0.21"
+futures-util = "0.3"
+
+# JSON & Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Templating
+askama = "0.12"
+
+# Security
+rustls = "0.23"
+rustls-pemfile = "2.0"
+
+# Sessions & Cookies
+tower-sessions = "0.12"
+time = "0.3"
+
+# Compression
+flate2 = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Utilities
+bytes = "1.0"
+mime = "0.3"
+mime_guess = "2.0"
+percent-encoding = "2.3"
+url = "2.5"
+thiserror = "1.0"
+parking_lot = "0.12"
+
+# Crypto for sessions
+rand = "0.8"
+sha2 = "0.10"
+hmac = "0.12"
+base64 = "0.22"
+
+[dev-dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+
+[features]
+default = ["http1", "http2"]
+http1 = []
+http2 = []
+websocket = []
+tls = []
+full = ["http1", "http2", "websocket", "tls"]
