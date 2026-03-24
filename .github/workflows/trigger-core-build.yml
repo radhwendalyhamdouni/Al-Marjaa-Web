@@ -1,0 +1,111 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# مكتبات المرجع الخارجية - Trigger Build Workflow
+# Al-Marjaa External Libraries - Trigger Core Build
+#
+# المخترع والمؤسس: رضوان دالي حمدوني
+# www.ecertifpro.com
+#
+# عند تغيير أي مكتبة، يُرسل إشارة لإعادة بناء النواة تلقائياً
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: 🔄 Trigger Core Build
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  trigger-core-build:
+    name: 🔔 Trigger Al-Marjaa-Core Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📋 Determine Library Type
+        id: library
+        run: |
+          REPO="${{ github.repository }}"
+          LIB_NAME=$(echo "$REPO" | cut -d'/' -f2 | sed 's/Al-Marjaa-//')
+          
+          echo "LIBRARY_NAME=$LIB_NAME" >> $GITHUB_OUTPUT
+          
+          case "$LIB_NAME" in
+            "AI")
+              echo "EVENT_TYPE=almarjaa-ai-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة الذكاء الاصطناعي" >> $GITHUB_OUTPUT
+              ;;
+            "Database")
+              echo "EVENT_TYPE=almarjaa-database-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة قواعد البيانات" >> $GITHUB_OUTPUT
+              ;;
+            "Network")
+              echo "EVENT_TYPE=almarjaa-network-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة الشبكات" >> $GITHUB_OUTPUT
+              ;;
+            "ONNX")
+              echo "EVENT_TYPE=almarjaa-onnx-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة ONNX" >> $GITHUB_OUTPUT
+              ;;
+            "GPU")
+              echo "EVENT_TYPE=almarjaa-gpu-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة GPU" >> $GITHUB_OUTPUT
+              ;;
+            "Industrial")
+              echo "EVENT_TYPE=almarjaa-industrial-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة الأتمتة الصناعية" >> $GITHUB_OUTPUT
+              ;;
+            "Web")
+              echo "EVENT_TYPE=almarjaa-web-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة الويب" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "EVENT_TYPE=external-library-updated" >> $GITHUB_OUTPUT
+              echo "LIBRARY_DISPLAY=مكتبة خارجية" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: 📢 Display Info
+        run: |
+          echo "╔══════════════════════════════════════════════════════════════╗"
+          echo "║           📚 External Library Updated                        ║"
+          echo "╠══════════════════════════════════════════════════════════════╣"
+          echo "║  المكتبة: ${{ steps.library.outputs.LIBRARY_DISPLAY }}"
+          echo "║  Repository: ${{ github.repository }}"
+          echo "║  Commit: ${{ github.sha }}"
+          echo "║  Event Type: ${{ steps.library.outputs.EVENT_TYPE }}"
+          echo "╠══════════════════════════════════════════════════════════════╣"
+          echo "║  🔔 جاري إرسال إشارة لإعادة بناء النواة...                   ║"
+          echo "╚══════════════════════════════════════════════════════════════╝"
+
+      - name: 🔔 Trigger Core Repository Build
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: \${{ secrets.CORE_REPO_TOKEN }}
+          repository: radhwendalyhamdouni/Al-Marjaa-Core
+          event-type: \${{ steps.library.outputs.EVENT_TYPE }}
+          client-payload: |
+            {
+              "library": "\${{ steps.library.outputs.LIBRARY_NAME }}",
+              "library_display": "\${{ steps.library.outputs.LIBRARY_DISPLAY }}",
+              "commit_sha": "\${{ github.sha }}",
+              "commit_message": "\${{ github.event.head_commit.message }}",
+              "repository": "\${{ github.repository }}",
+              "ref": "\${{ github.ref }}",
+              "actor": "\${{ github.actor }}",
+              "timestamp": "\${{ github.event.head_commit.timestamp }}"
+            }
+
+      - name: ✅ Success
+        run: |
+          echo "╔══════════════════════════════════════════════════════════════╗"
+          echo "║                                                              ║"
+          echo "║   ✅ تم إرسال إشارة البناء بنجاح!                           ║"
+          echo "║   Build trigger sent successfully!                           ║"
+          echo "║                                                              ║"
+          echo "║   📦 النواة ستُبنى تلقائياً:                                 ║"
+          echo "║   github.com/radhwendalyhamdouni/Al-Marjaa-Core/actions      ║"
+          echo "║                                                              ║"
+          echo "║   👑 المخترع: رضوان دالي حمدوني                              ║"
+          echo "║   🌐 www.ecertifpro.com                                      ║"
+          echo "║                                                              ║"
+          echo "╚══════════════════════════════════════════════════════════════╝"
